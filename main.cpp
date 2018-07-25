@@ -1,16 +1,19 @@
 #include <iostream>
 #include <algorithm>
-#include <unordered_map>
+#include <memory>
 #include <utility>
 #include <sstream>
+#include <vector>
 
 class rectangle {
 public:
+	using ptr_t = std::shared_ptr<rectangle>;
+
 	rectangle() { }
 
 	rectangle(int x, int y, unsigned int w, unsigned int h) 
-		: top_left{ y, x }
-		, bottom_rigth{ y + h, x + w } {
+		: top_left_{ y, x }
+		, bottom_rigth_{ y + h, x + w } {
 
 		// If it is zero sized, it will be invalidated
 		valid_ = !(!w || !h);
@@ -18,13 +21,13 @@ public:
 
 	explicit operator bool() const { return valid_; }
 
-	//~rectangle() { valid_ = false; }
+	~rectangle() { valid_ = false; }
 
 	friend bool operator&(const rectangle& lRect, const rectangle& rRect) {
 		return lRect.intersect(rRect);
 	}
 
-	friend const rectangle& operator&&(const rectangle& lRect, const rectangle& rRect) {
+	friend ptr_t operator&&(const rectangle& lRect, const rectangle& rRect) {
 		return lRect.get_intersection(rRect);
 	}
 
@@ -33,9 +36,9 @@ public:
 		if (!rect)
 			output << "at (?, ?), w=?, h=?";
 		else
-			output << "at (" << rect.top_left.second << ", " << rect.top_left.first << "), "
-				<< "w=" << rect.bottom_rigth.second - rect.top_left.second << ", "
-				<< "h=" << rect.bottom_rigth.first - rect.top_left.first;
+			output << "at (" << rect.top_left_.second << ", " << rect.top_left_.first << "), "
+				<< "w=" << rect.bottom_rigth_.second - rect.top_left_.second << ", "
+				<< "h=" << rect.bottom_rigth_.first - rect.top_left_.first;
 
 		return output;
 	}
@@ -47,79 +50,158 @@ private:
 		if (!other) return false;
 
 		// Verifying if other rectangle is under or above me
-		if ((top_left.first >= other.bottom_rigth.first) ||
-			(other.top_left.first >= bottom_rigth.first))
+		if ((top_left_.first >= other.bottom_rigth_.first) ||
+			(other.top_left_.first >= bottom_rigth_.first))
 			return false;
 
 		// Verifying if other rectangle is left or right of me 
-		if ((top_left.second >= other.bottom_rigth.second) ||
-			(other.top_left.second >= bottom_rigth.second))
+		if ((top_left_.second >= other.bottom_rigth_.second) ||
+			(other.top_left_.second >= bottom_rigth_.second))
 			return false;
 
 		return true;
 	}
 
-	const rectangle& get_intersection(const rectangle& other) const {
-		rectangle result;
+	ptr_t get_intersection(const rectangle& other) const {
+		auto result = std::make_shared<rectangle>();
 
 		if (intersect(other)) {
-			int x, y;
+			int x = { 0 }, y = { 0 };
 
 			// Getting top
-			x = std::max(top_left.first, other.top_left.first);
+			x = std::max(top_left_.first, other.top_left_.first);
 
 			// Getting left
-			y = std::max(top_left.second, other.top_left.second);
+			y = std::max(top_left_.second, other.top_left_.second);
 
-			// Saving top_left;
-			result.top_left = std::make_pair(x, y);
+			// Saving top_left_;
+			(*result).top_left_ = std::make_pair(x, y);
 
 			// Getting bottom
-			x = std::min(bottom_rigth.first, other.bottom_rigth.first);
+			x = std::min(bottom_rigth_.first, other.bottom_rigth_.first);
 
 			// Getting right
-			y = std::min(bottom_rigth.second, other.bottom_rigth.second);
+			y = std::min(bottom_rigth_.second, other.bottom_rigth_.second);
 
 			// Saving bottom_right
-			result.bottom_rigth = std::make_pair(x, y);
+			(*result).bottom_rigth_ = std::make_pair(x, y);
 
-			result.valid_ = true;
+			(*result).valid_ = true;
 		}
 
 		return result;
 	}
 
 	bool valid_ = { false };
-	std::pair<int, int> top_left = { 0, 0 };
-	std::pair<int, int> bottom_rigth = { 0, 0 };
+	std::pair<int, int> top_left_ = { 0, 0 };
+	std::pair<int, int> bottom_rigth_ = { 0, 0 };
+};
+
+class rectangles_mactches {
+public:
+	void add_rectangle(rectangle::ptr_t new_rect) {
+		rectangles_.push_back(new_rect);
+	}
+
+	void print_intersections() {
+		build_intersections();
+		std::cout << "Input :" << std::endl;
+		for (size_t idx = { 0 }; idx < rectangles_.size(); idx++) {
+			std::cout << '\t' << idx + 1 << ": Rectangle " << (*rectangles_[idx]) << std::endl;
+		}
+		std::cout << std::endl << "Intersections" << std::endl;
+		for (const auto &intersection : intersections_) {
+			std::cout << '\t' << "Between rectangle ";
+			for (size_t idx = 0; idx < intersection.parents.size(); idx++) {
+				if (idx < intersection.parents.size() - 1) {
+					std::cout << intersection.parents[idx] + 1;
+					if (idx < intersection.parents.size() - 2)
+						std::cout << ", ";
+				}
+				else
+					std::cout << " and " << intersection.parents[idx] + 1;
+			}
+			std::cout << " " << (*intersection.rect) << std::endl;
+		}
+	}
+private:
+	using rectangles_vector_t = std::vector<rectangle::ptr_t >;
+
+	struct interaction_item {
+		interaction_item(rectangle::ptr_t r_) : rect(r_) {}
+		rectangle::ptr_t rect;
+		std::vector<int> parents;
+	};
+
+	void build_intersections() {
+		int level = { 0 };
+		while (build_intersections(level++));
+	}
+
+	bool build_intersections(unsigned int level) {
+		if (!level) {
+			for (size_t idxA = { 0 }; idxA < rectangles_.size(); idxA++) {
+				for (size_t idxB = { idxA + 1 }; idxB < rectangles_.size(); idxB++) {
+					if ((*rectangles_[idxA]) & (*rectangles_[idxB])) {
+						interaction_item item((*rectangles_[idxA]) && (*rectangles_[idxB]));
+						item.parents.push_back(idxA);
+						item.parents.push_back(idxB);
+						intersections_.push_back(item);
+					}
+				}
+			}
+			return true;
+		} else {
+			std::vector<interaction_item> news_intersections;
+			for (size_t idx = { 0 }; idx < rectangles_.size(); idx++) {
+				for (const auto &item : intersections_) {
+					if (item.parents.size() >= level + 1) {
+						if (std::find(item.parents.begin(), item.parents.end(), idx) == item.parents.end()) {
+							if ((*item.rect) & (*rectangles_[idx])) {
+								std::vector<int> new_parents = item.parents;
+								new_parents.push_back(idx);
+								std::sort(new_parents.begin(), new_parents.end());
+								bool found = { false };
+								if (!found) {
+									for (const auto &verify_item : news_intersections) {
+										if (std::equal(new_parents.begin(), new_parents.end(), verify_item.parents.begin()))
+											found = true;
+									}
+								}
+								if (found)
+									continue;
+								interaction_item new_item((*item.rect) && (*rectangles_[idx]));
+								new_item.parents = new_parents;
+								news_intersections.push_back(new_item);
+							}
+						}
+					}
+				}
+			}
+			if (news_intersections.size()) {
+				intersections_.insert(intersections_.end(), news_intersections.begin(), news_intersections.end());
+				return true;
+			}
+		}
+		return false;
+	}
+
+	rectangles_vector_t rectangles_;
+	std::vector<interaction_item> intersections_;
+
 };
 
 int main(int argc, char* argv[]) {
-	std::vector<std::pair<std::string, rectangle> > rectangles, intersections;
 
-	rectangles.push_back(std::make_pair("1", rectangle(100, 100, 250, 80)));
-	rectangles.push_back(std::make_pair("2", rectangle(120, 200, 250, 150)));
-	rectangles.push_back(std::make_pair("3", rectangle(140, 160, 250, 100)));
-	rectangles.push_back(std::make_pair("4", rectangle(160, 140, 350, 190)));
+	rectangles_mactches rect_macthes;
 
-	std::cout << "Input :" << std::endl;
-	for (auto &rect : rectangles) {
-		std::cout << '\t' << rect.first << ": Rectangle " << rect.second << std::endl;
-	}
+	rect_macthes.add_rectangle(std::make_shared<rectangle>(100, 100, 250,  80));
+	rect_macthes.add_rectangle(std::make_shared<rectangle>(120, 200, 250, 150));
+	rect_macthes.add_rectangle(std::make_shared<rectangle>(140, 160, 250, 100));
+	rect_macthes.add_rectangle(std::make_shared<rectangle>(160, 140, 350, 190));
+	rect_macthes.add_rectangle(std::make_shared<rectangle>(290, 240, 100, 200));
 
-	std::cout << "Intersections" << std::endl;
-	for (auto rectA = rectangles.begin(); rectA != rectangles.end(); rectA++) {
-		for (auto rectB = rectA+1; rectB != rectangles.end(); rectB++) {
-			if ((*rectA).second & (*rectB).second) {
-				std::stringstream ss;
-				rectangle aux(((*rectA).second && (*rectB).second));
-				ss << (*rectA).first << ", " << (*rectB).first;
-				intersections.push_back(std::make_pair(ss.str(), aux));
-				std::cout << '\t' << "Between rectangle " << (*rectA).first << " and " << (*rectB).first
-					<< " " << aux << std::endl;
-			}
-		}
-	}
+	rect_macthes.print_intersections();
 
 	return 0;
 }
