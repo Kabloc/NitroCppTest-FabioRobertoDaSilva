@@ -1,0 +1,38 @@
+Input:
+	1: Rectangle at (100, 100), w=250, h=80.
+	2: Rectangle at (120, 200), w=250, h=150.
+	3: Rectangle at (140, 160), w=250, h=100.
+	4: Rectangle at (160, 140), w=350, h=190.
+	5: Rectangle at (290, 240), w=100, h=200.
+	6: Rectangle at (90, 240), w=100, h=200.
+	7: Rectangle at (50, 400), w=400, h=100.
+	8: Rectangle at (50, 50), w=100, h=100.
+	9: Rectangle at (400, 30), w=100, h=100.
+	10: Rectangle at (400, 350), w=100, h=100.
+
+Intersections
+	Between rectangle 1 and 3 at (140, 160), w=210, h=20.
+	Between rectangle 1 and 4 at (160, 140), w=190, h=40.
+	Between rectangle 1 and 8 at (100, 100), w=50, h=50.
+	Between rectangle 2 and 3 at (140, 200), w=230, h=60.
+	Between rectangle 2 and 4 at (160, 200), w=210, h=130.
+	Between rectangle 2 and 5 at (290, 240), w=80, h=110.
+	Between rectangle 2 and 6 at (120, 240), w=70, h=110.
+	Between rectangle 3 and 4 at (160, 160), w=230, h=100.
+	Between rectangle 3 and 5 at (290, 240), w=100, h=20.
+	Between rectangle 3 and 6 at (140, 240), w=50, h=20.
+	Between rectangle 4 and 5 at (290, 240), w=100, h=90.
+	Between rectangle 4 and 6 at (160, 240), w=30, h=90.
+	Between rectangle 5 and 7 at (290, 400), w=100, h=40.
+	Between rectangle 6 and 7 at (90, 400), w=100, h=40.
+	Between rectangle 7 and 10 at (400, 400), w=50, h=50.
+	Between rectangle 1, 3 and 4 at (160, 160), w=190, h=20.
+	Between rectangle 2, 3 and 4 at (160, 200), w=210, h=60.
+	Between rectangle 2, 3 and 5 at (290, 240), w=80, h=20.
+	Between rectangle 2, 3 and 6 at (140, 240), w=50, h=20.
+	Between rectangle 2, 4 and 5 at (290, 240), w=80, h=90.
+	Between rectangle 2, 4 and 6 at (160, 240), w=30, h=90.
+	Between rectangle 3, 4 and 5 at (290, 240), w=100, h=20.
+	Between rectangle 3, 4 and 6 at (160, 240), w=30, h=20.
+	Between rectangle 2, 3, 4 and 5 at (290, 240), w=80, h=20.
+	Between rectangle 2, 3, 4 and 6 at (160, 240), w=30, h=20.
