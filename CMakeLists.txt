@@ -4,14 +4,13 @@ project (nitro_test)
 set (CMAKE_CXX_STANDARD 14)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 set (CMAKE_CXX_EXTENSIONS OFF)
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-include_directories ( ${nitro_test_SOURCE_DIR}/include/ )
+include("cmake/googletest.cmake")
 
-if(NOT EXISTS "${nitro_test_SOURCE_DIR}/include/json.hpp")
-	message ( "Downloading json.hpp from 'JSON for Modern C++' project version 3.1.2" )
-	file (DOWNLOAD "https://github.com/nlohmann/json/releases/download/v3.1.2/json.hpp" ${nitro_test_SOURCE_DIR}/include/json.hpp)
-endif()
+enable_testing()
+add_subdirectory(src)
+add_subdirectory(test)
 
-add_executable (nitro_test src/rectangle.cpp
-                           src/rectangles_mactches.cpp
-                           main.cpp)
+add_test(NAME Rectangle COMMAND rect_test)
+add_test(NAME Rectangles_Matches COMMAND matches_test)

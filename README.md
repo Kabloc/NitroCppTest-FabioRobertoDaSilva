@@ -4,6 +4,7 @@ Nitro C++ Proficiency Test
 
 External dependencies is:
 * [JSON for Modern C++](https://github.com/nlohmann/json/releases/tag/v3.1.2) - version 3.1.2
+* [Google Test](https://github.com/google/googletest) - Last version (branch master)
 
 ## Build instructions
 

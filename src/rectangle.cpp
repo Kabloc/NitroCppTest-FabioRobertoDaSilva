@@ -23,26 +23,22 @@ bool rectangle::operator==(const rectangle& another) const {
 			(bottom_rigth_ == another.bottom_rigth_));
 }
 
-// Assignment operator 
-rectangle& rectangle::operator=(const rectangle& another) {
-	valid_ = another.valid_;
-	top_left_ = another.top_left_;
-	bottom_rigth_ = another.bottom_rigth_;
-	return *this;
-}
-
 // Operator << to make it easy to print the values
 std::ostream& operator<<(std::ostream& output, const rectangle& rect) {
 	// Example from purpose file:
 	// (top, left), w=(left - right), h=(bottom - top)
-	if (!rect)
-		output << "(?, ?), w=?, h=?";
-	else
 		output << "(" << rect.top_left_.second << ", " << rect.top_left_.first << "), "
 			   << "w=" << rect.bottom_rigth_.second - rect.top_left_.second << ", "
 			   << "h=" << rect.bottom_rigth_.first - rect.top_left_.first;
 
 	return output;
+}
+
+// Used to print the intersections as purposed
+const std::string rectangle::to_string() const {
+	std::stringstream ss;
+	ss << (*this);
+	return ss.str();
 }
 
 // Used to verify if exist a valid intersection rectangle
@@ -71,12 +67,12 @@ bool rectangle::intersect(const rectangle& another) const {
 
 // Used to create an valid intersection rectangle between 
 // this and another rectangle
-rectangle::ptr_t rectangle::get_intersection(const rectangle& another) const {
-	auto result = std::make_shared<rectangle>();
+const rectangle rectangle::get_intersection(const rectangle& another) const {
+	rectangle result;
 
 	// If there are the same values
 	if ((*this) == another) {
-		(*result) = another;
+		result = another;
 		return result;
 	}
 
@@ -91,7 +87,7 @@ rectangle::ptr_t rectangle::get_intersection(const rectangle& another) const {
 		y = std::max(top_left_.second, another.top_left_.second);
 
 		// Saving top_left_;
-		(*result).top_left_ = std::make_pair(x, y);
+		result.top_left_ = std::make_pair(x, y);
 
 		// Getting bottom
 		x = std::min(bottom_rigth_.first, another.bottom_rigth_.first);
@@ -100,12 +96,20 @@ rectangle::ptr_t rectangle::get_intersection(const rectangle& another) const {
 		y = std::min(bottom_rigth_.second, another.bottom_rigth_.second);
 
 		// Saving bottom_right
-		(*result).bottom_rigth_ = std::make_pair(x, y);
+		result.bottom_rigth_ = std::make_pair(x, y);
 
 		// There I can validate the rectangle because
 		// all data come from valid rectangles
-		(*result).valid_ = true;
+		result.valid_ = true;
 	}
 
 	return result;
+}
+
+// Assignment operator 
+rectangle& rectangle::operator=(const rectangle& another) {
+	valid_ = another.valid_;
+	top_left_ = another.top_left_;
+	bottom_rigth_ = another.bottom_rigth_;
+	return *this;
 }

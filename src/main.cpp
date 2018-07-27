@@ -1,4 +1,4 @@
-#include <rectangles_mactches.h>
+#include <rectangles_matches.h>
 #include <functional>
 #include <fstream>
 #include <json.hpp>
@@ -12,13 +12,13 @@
 
 // Function to read the file content
 std::string read_data(std::istream& in) {
-	std::string out_str;
+	std::stringstream out_str;
 	while (in.good()) {
 		std::string line;
 		std::getline(in, line);
-		out_str += line;
+		out_str << line;
 	}
-	return out_str;
+	return out_str.str();
 }
 
 int main(int argc, char* argv[]) {
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	try {
-		rectangles_mactches rect_macthes;
+		rectangles_matches rect_macthes;
 		auto json = nlohmann::json::parse(json_buffer);
 
 		// As purposed: "The JSON file may contain any number of input rectangles. 
@@ -70,18 +70,20 @@ int main(int argc, char* argv[]) {
 
 		// Iterating the rects and adding to rect_matches
 		for (auto j_rect = begin; j_rect < end; j_rect++) {
-			rect_macthes.add_rectangle(std::make_shared<rectangle>(
-				(*j_rect)["x"], (*j_rect)["y"], (*j_rect)["w"], (*j_rect)["h"]));
+			rectangle rect((*j_rect)["x"], (*j_rect)["y"], (*j_rect)["w"], (*j_rect)["h"]);
+			if (!rect_macthes.add_rectangle(rect)) {
+				std::cerr << "Error when inserting rectangle " << rect << std::endl;
+				return -1;
+			}
 		}
 
-		// Where everthing happen...
-		rect_macthes.print_intersections();
+		// Print the result
+		std::cout << rect_macthes;
 
 		return 0;
-	} catch (nlohmann::json::parse_error& e) {
-		std::cerr << "message: " << e.what() << '\n'
-			<< "exception id: " << e.id << '\n'
-			<< "byte position of error: " << e.byte << std::endl;
+	} catch (nlohmann::json::exception& e) {
+		std::cerr << "Something wrong with json content: " << std::endl
+			<< e.what() << std::endl;
 	}
 	return -1;
 }

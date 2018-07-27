@@ -27,9 +27,6 @@ public:
 	// Equal operator
 	bool operator==(const rectangle& another) const;
 
-	// Assignment operator 
-	rectangle& operator=(const rectangle& another);
-
 	// Operator << to make it easy to print the values
 	friend std::ostream& operator<<(std::ostream& output, const rectangle& rect);
 
@@ -37,11 +34,17 @@ public:
 	// between this and another rectangle.
 	bool intersect(const rectangle& another) const;
 
+	// Used to print the intersections as purposed
+	const std::string to_string() const;
+
 	// Used to create an valid intersection rectangle between 
 	// this and another rectangle
-	ptr_t get_intersection(const rectangle& another) const;
+	const rectangle get_intersection(const rectangle& another) const;
 
 private:
+
+	// Assignment operator 
+	rectangle & operator=(const rectangle& another);
 
 	// I prefer to save the (Top, Left) point and (Bottom, Right) point 
 	// to make easy to make the calculus 
