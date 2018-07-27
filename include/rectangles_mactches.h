@@ -1,6 +1,7 @@
 #pragma once
 #ifndef _RECTANGLES_MACTCHES_H_
 #define _RECTANGLES_MACTCHES_H_
+#include <map>
 #include <rectangle.h>
 
 class rectangles_mactches {
@@ -12,23 +13,22 @@ public:
 	void print_intersections();
 
 private:
-	// Clean the intersection tree and create a new
-	void build_intersections();
-
-	bool build_intersections(unsigned int level);
-
 	// Intersection tree node
-	struct interaction_item {
-		interaction_item(rectangle::ptr_t r_) : rect(r_) {}
+	struct interaction_node {
+		interaction_node(rectangle::ptr_t r_) : rect(r_) {}
+
+		// Rectangle's size and location
 		rectangle::ptr_t rect;
+
+		// List of rectangles' id that compose this rectangle
 		std::vector<int> parents;
 	};
 
-	// Inputted rectangles
-	std::vector<rectangle::ptr_t > rectangles_;
+	// Intersecting rectangles' tree level
+	using intersection_level_t = std::vector<interaction_node>;
 
-	// Intersecting rectangles' tree
-	std::vector<interaction_item> intersections_;
+	// Intersection rectangles' tree
+	std::map<int, intersection_level_t> intersection_tree_;
 
 };
 #endif //_RECTANGLES_MACTCHES_H_

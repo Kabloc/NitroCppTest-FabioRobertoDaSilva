@@ -2,58 +2,15 @@
 
 // Just add a rectangle
 void rectangles_mactches::add_rectangle(rectangle::ptr_t new_rect) {
-	rectangles_.push_back(new_rect);
-}
 
-// Used to print the intersections as purposed
-void rectangles_mactches::print_intersections() {
-	// Build the intersection tree
-	build_intersections();
+	// Creating a new node for the tree
+	int new_rect_id = intersection_tree_[0].size() + 1;
+	interaction_node new_node(new_rect);
+	new_node.parents.push_back(new_rect_id);
 
-	// Start the print as purposed:
-	// Input:
-	//		[N of rectangle]: Rectangle at ([up], [left]), w = [width], h = [height].
-	std::cout << "Input:" << std::endl;
-	for (size_t idx = { 0 }; idx < rectangles_.size(); idx++) {
-		std::cout << '\t' << idx + 1 << ": Rectangle at " << (*rectangles_[idx]) << "." << std::endl;
-	}
-
-	// Continue the print as purposed
-	//Intersections
-	//		Between rectangle [list of parents] at ([up], [left]), w = [width], h = [height].
-	std::cout << std::endl << "Intersections" << std::endl;
-	for (const auto &intersection : intersections_) {
-		std::cout << '\t' << "Between rectangle ";
-		for (size_t idx = { 0 }; idx < intersection.parents.size(); idx++) {
-			// if is not last just print it
-			if (idx < intersection.parents.size() - 1) {
-				std::cout << intersection.parents[idx] + 1;
-				// after the penultimate member has no comma
-				if (idx < intersection.parents.size() - 2)
-					std::cout << ", ";
-			}
-			else
-				// the last member
-				std::cout << " and " << intersection.parents[idx] + 1;
-		}
-		// rectangle's values
-		std::cout << " at " << (*intersection.rect) << "." << std::endl;
-	}
-}
-
-// Clean the intersection tree and create a new
-void rectangles_mactches::build_intersections() {
-	// Start with low level
-	int level = { 0 };
-	// Clean the old tree
-	intersections_.clear();
-	// Get all parents level after level
-	while (build_intersections(level++));
-}
-
-bool rectangles_mactches::build_intersections(unsigned int level) {
-	// Zero is the first level
-	if (!level) {
+	if (intersection_tree_[0].size()) {
+		bool had_new_intersection = { false };
+		int level = { 0 };
 		// Make a permutation between the rectangles:
 		// Example: {1, 2, 3, 4}
 		//      1 & 2, 1 & 3, 1 & 4
@@ -62,73 +19,87 @@ bool rectangles_mactches::build_intersections(unsigned int level) {
 
 		// As purposed: "Rectangle A&B is the same as B&A and should
 		// result in only one rectangle in the result." - from Purpose file	
-		for (size_t idxA = { 0 }; idxA < rectangles_.size(); idxA++) {
-			for (size_t idxB = { idxA + 1 }; idxB < rectangles_.size(); idxB++) {
-				if ((*rectangles_[idxA]).intersect(*rectangles_[idxB])) {
-					interaction_item item((*rectangles_[idxA]).get_intersection(*rectangles_[idxB]));
-					item.parents.push_back(idxA);
-					item.parents.push_back(idxB);
-					intersections_.push_back(item);
-				}
-			}
-		}
-		// Level's end
-		return (intersections_.size() > 0);
-	} else {
-		// All the others levels
-		std::vector<interaction_item> news_intersections;
-		// Make a permutation between the rectangles and the intersections rectangles
-		// Example: {1, 2, 3, 4} and {1&3, 1&4, 2&3, 2&4, 3&4 }
-		//      1 & 1&3, 1 & 1&4, ..., 1 & 3&4
-		//      2 & 1&3, 2 & 1&4, ..., 2 & 3&4
-		//      ...
-		//      4 & 1&3, 4 & 1&4, ..., 4 & 3&4
+		do {
+			had_new_intersection = false;
+			// Make a permutation between the rectangles and the intersections rectangles
+			// Example: {1, 2, 3, 4} and {1&3, 1&4, 2&3, 2&4, 3&4 }
+			//      1 & 1&3, 1 & 1&4, ..., 1 & 3&4
+			//      2 & 1&3, 2 & 1&4, ..., 2 & 3&4
+			//      ...
+			//      4 & 1&3, 4 & 1&4, ..., 4 & 3&4
+			for (const auto& node : intersection_tree_[level]) {
 
-		for (size_t idx = { 0 }; idx < rectangles_.size(); idx++) {
-			for (const auto &item : intersections_) {
-
-				// The number of parents determine the level
-				if (item.parents.size() < level + 1)
+				// There's intersection?
+				if (!node.rect->intersect(*new_rect))
 					continue;
-					
+
 				// But "1 & 1&3" and "1 & 1&4" is a ilegal permutation because will always return true
 				// because A&B is the same B&A and A's children will intersect with A 
-				if (std::find(item.parents.begin(), item.parents.end(), idx) != item.parents.end())
+				if (std::find(node.parents.begin(), node.parents.end(), new_rect_id) != node.parents.end())
 					continue;
 
-				// Verify if exist a valid intersecting rectangle 
-				if ((*item.rect).intersect(*rectangles_[idx])) {
+				// Create a new intersection item to next level
+				interaction_node new_item(node.rect->get_intersection(*new_rect));
+				new_item.parents = node.parents;
+				new_item.parents.push_back(new_rect_id);
+				intersection_tree_[level + 1].push_back(new_item);
 
-					// Before calculating the intersection rectangle, make sure that this combination already exists
-					auto new_parents = item.parents;
-					new_parents.push_back(idx);
-					std::sort(new_parents.begin(), new_parents.end());
-					bool found = { false };
-					for (const auto &verify_item : news_intersections) {
-						if (std::equal(new_parents.begin(), new_parents.end(), verify_item.parents.begin())) {
-							found = true;
-							break;
-						}
+				// Keeping the ids list sorted
+				std::sort(intersection_tree_[level + 1].begin(), intersection_tree_[level + 1].end(), 
+					[](interaction_node a, interaction_node b) {
+						return a.parents < b.parents;
 					}
+				);
+				had_new_intersection = true;
+			}
+			// If there was no intersection at the current level 
+			// it will be impossible to have the next level
+			if (!had_new_intersection)
+				break;
+			level++;
+		} while (1);
+	}
+	// All inserted rectangle must be in the first level
+	intersection_tree_[0].push_back(new_node);
+}
 
-					// If so, do not need to do this calculation.
-					if (found)
-						continue;
+// Used to print the intersections as purposed
+void rectangles_mactches::print_intersections() {
 
-					interaction_item new_item((*item.rect).get_intersection(*rectangles_[idx]));
-					new_item.parents = new_parents;
-					news_intersections.push_back(new_item);
+	for (const auto &level : intersection_tree_ ) {
+		// level.first: the actual level
+		// level.second: list of level's nodes
+		if (level.first == 0) { // The first level is the imputed rectangles
+			// Start the print as purposed:
+			// Input:
+			//		[N of rectangle]: Rectangle at ([up], [left]), w = [width], h = [height].
+			std::cout << "Input:" << std::endl;
+			for (const auto &node : level.second) {
+				std::cout << '\t' << node.parents[0] << ": Rectangle at " << (*node.rect) << "." << std::endl;
+			}
+		} else { // The others levels are the intersections
+			// Continue the print as purposed
+			// Intersections
+			//		Between rectangle [list of parents] at ([up], [left]), w = [width], h = [height].
+			if (level.first == 1)
+				std::cout << std::endl << "Intersections" << std::endl;
+			for (const auto &node : level.second) {
+				std::cout << '\t' << "Between rectangle ";
+				for (size_t idx = { 0 }; idx < node.parents.size(); idx++) {
+					// if is not last just print it
+					if (idx < node.parents.size() - 1) {
+						std::cout << node.parents[idx];
+						// after the penultimate member has no comma
+						if (idx < node.parents.size() - 2)
+							std::cout << ", ";
+					}
+					else
+						// the last member
+						std::cout << " and " << node.parents[idx];
 				}
+				// rectangle's values
+				std::cout << " at " << (*node.rect) << "." << std::endl;
 			}
 		}
-		// If this level generated new intersecting rectangles
-		if (news_intersections.size()) {
-			// Add to intersection list
-			intersections_.insert(intersections_.end(), news_intersections.begin(), news_intersections.end());
-			// Level's end
-			return true;
-		}
 	}
-	// There're no new intersecting rectangles
-	return false;
 }
