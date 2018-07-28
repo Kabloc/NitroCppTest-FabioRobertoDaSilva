@@ -91,9 +91,9 @@ std::ostream& operator<<(std::ostream& output, const rectangles_matches& rect) {
 
 	for (size_t level = { 0 }; level < rect.intersection_tree_.size(); level++) {
 		if (level == 0) { // The first level is the imputed rectangles
-						  // Start the print as purposed:
-						  // Input:
-						  //		[rectangle number]: Rectangle at ([up], [left]), w = [width], h = [height].
+		                  // Start the print as purposed:
+		                  // Input:
+		                  //    [rectangle number]: Rectangle at ([up], [left]), w = [width], h = [height].
 			output << "Input:" << std::endl;
 			for (const auto &node : rect.intersection_tree_[level]) {
 				// REVIEWER NOTE: "rectangle number" today is the internal ID but can be the position
@@ -101,9 +101,9 @@ std::ostream& operator<<(std::ostream& output, const rectangles_matches& rect) {
 			}
 		}
 		else { // The others levels are the intersections
-			   // Continue the print as purposed
-			   // Intersections
-			   //		Between rectangle [list of parents] at ([up], [left]), w = [width], h = [height].
+		       // Continue the print as purposed
+		       // Intersections
+		       //    Between rectangle [list of parents] at ([up], [left]), w = [width], h = [height].
 			if (level == 1)
 				output << std::endl << "Intersections" << std::endl;
 			for (const auto &node : rect.intersection_tree_[level]) {

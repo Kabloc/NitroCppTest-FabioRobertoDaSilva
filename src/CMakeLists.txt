@@ -1,4 +1,4 @@
-include_directories ( ${nitro_test_SOURCE_DIR}/include/ )
+include_directories ( ${nitro_rectangles_matches_SOURCE_DIR}/include/ )
 include_directories ( ${CMAKE_CURRENT_BINARY_DIR} )
 
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/json.hpp")
@@ -6,6 +6,6 @@ if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/json.hpp")
 	file (DOWNLOAD "https://github.com/nlohmann/json/releases/download/v3.1.2/json.hpp" ${CMAKE_CURRENT_BINARY_DIR}/json.hpp)
 endif()
 
-add_executable (nitro_test rectangle.cpp
-                           rectangles_matches.cpp
-                           main.cpp)
+add_executable (nitro_rectangles_matches rectangle.cpp
+                                         rectangles_matches.cpp
+                                         main.cpp)

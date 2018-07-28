@@ -8,7 +8,7 @@
 // rectangles. You may discard the remaining rectangles 
 // after the first 10." - from Purpose file
 #define MIN_RECT 10
-#define MAX_RECT 10
+#define MAX_RECT 15
 
 // Function to read the file content
 std::string read_data(std::istream& in) {

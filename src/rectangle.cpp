@@ -19,8 +19,8 @@ rectangle::operator bool() const {
 // Equal operator
 bool rectangle::operator==(const rectangle& another) const {
 	return ((valid_        == another.valid_) &&
-			(top_left_     == another.top_left_) &&
-			(bottom_rigth_ == another.bottom_rigth_));
+	        (top_left_     == another.top_left_) &&
+	        (bottom_rigth_ == another.bottom_rigth_));
 }
 
 // Operator << to make it easy to print the values
@@ -28,8 +28,8 @@ std::ostream& operator<<(std::ostream& output, const rectangle& rect) {
 	// Example from purpose file:
 	// (top, left), w=(left - right), h=(bottom - top)
 		output << "(" << rect.top_left_.second << ", " << rect.top_left_.first << "), "
-			   << "w=" << rect.bottom_rigth_.second - rect.top_left_.second << ", "
-			   << "h=" << rect.bottom_rigth_.first - rect.top_left_.first;
+		       << "w=" << rect.bottom_rigth_.second - rect.top_left_.second << ", "
+		       << "h=" << rect.bottom_rigth_.first - rect.top_left_.first;
 
 	return output;
 }
