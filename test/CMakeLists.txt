@@ -16,10 +16,20 @@ add_executable(ctor_no_width ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangl
 target_link_libraries(ctor_no_width gtest_main)
 add_test(NAME Rectangle_Ctor_NoWidth COMMAND ctor_no_width)
 
+add_executable(ctor_negative_height ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
+                                    ctor_negative_height.cpp)
+target_link_libraries(ctor_negative_height gtest_main)
+add_test(NAME Rectangle_Ctor_NegativeWidth COMMAND ctor_negative_height)
+
 add_executable(ctor_no_height ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
                               ctor_no_height.cpp)
 target_link_libraries(ctor_no_height gtest_main)
 add_test(NAME Rectangle_Ctor_NoHeight COMMAND ctor_no_height)
+
+add_executable(ctor_negative_width ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
+                                   ctor_negative_width.cpp)
+target_link_libraries(ctor_negative_width gtest_main)
+add_test(NAME Rectangle_Ctor_NegativeHeight COMMAND ctor_negative_width)
 
 add_executable(ctor_negative_x ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
                                ctor_negative_x.cpp)
@@ -66,10 +76,20 @@ add_executable(ostream_optor_no_widht ${nitro_rectangles_matches_SOURCE_DIR}/src
 target_link_libraries(ostream_optor_no_widht gtest_main)
 add_test(NAME Rectangle_OstreamOptor_NoWidht COMMAND ostream_optor_no_widht) 
 
+add_executable(ostream_optor_negative_widht ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
+                                      ostream_optor_negative_widht.cpp)
+target_link_libraries(ostream_optor_negative_widht gtest_main)
+add_test(NAME Rectangle_OstreamOptor_NegativeWidht COMMAND ostream_optor_negative_widht) 
+
 add_executable(ostream_optor_no_height ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
                                        ostream_optor_no_height.cpp)
 target_link_libraries(ostream_optor_no_height gtest_main)
 add_test(NAME Rectangle_OstreamOptor_NoHeight COMMAND ostream_optor_no_height) 
+
+add_executable(ostream_optor_negative_height ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
+                                       ostream_optor_negative_height.cpp)
+target_link_libraries(ostream_optor_negative_height gtest_main)
+add_test(NAME Rectangle_OstreamOptor_NegativeHeight COMMAND ostream_optor_negative_height) 
 
 add_executable(ostream_optor_negative_x ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
                                         ostream_optor_negative_x.cpp)
@@ -96,10 +116,30 @@ add_executable(get_intersection_false ${nitro_rectangles_matches_SOURCE_DIR}/src
 target_link_libraries(get_intersection_false gtest_main)
 add_test(NAME Rectangle_GetIntersection_False COMMAND get_intersection_false)
 
+add_executable(get_intersection_false_limit_x ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
+                                              get_intersection_false_limit_x.cpp)
+target_link_libraries(get_intersection_false_limit_x gtest_main)
+add_test(NAME Rectangle_GetIntersection_FalseLimitX COMMAND get_intersection_false_limit_x)
+
+add_executable(get_intersection_false_limit_y ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
+                                              get_intersection_false_limit_y.cpp)
+target_link_libraries(get_intersection_false_limit_y gtest_main)
+add_test(NAME Rectangle_GetIntersection_FalseLimitY COMMAND get_intersection_false_limit_y)
+
 add_executable(get_intersection_true ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
                                      get_intersection_true.cpp)
 target_link_libraries(get_intersection_true gtest_main)
 add_test(NAME Rectangle_GetIntersection_True COMMAND get_intersection_true)
+
+add_executable(get_intersection_true_limit_y ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
+                                             get_intersection_true_limit_y.cpp)
+target_link_libraries(get_intersection_true_limit_y gtest_main)
+add_test(NAME Rectangle_GetIntersection_TrueLimitY COMMAND get_intersection_true_limit_y)
+
+add_executable(get_intersection_true_limit_x ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
+                                             get_intersection_true_limit_x.cpp)
+target_link_libraries(get_intersection_true_limit_x gtest_main)
+add_test(NAME Rectangle_GetIntersection_TrueLimitX COMMAND get_intersection_true_limit_x)
 
 add_executable(get_intersection_true_verified ${nitro_rectangles_matches_SOURCE_DIR}/src/rectangle.cpp
                                               get_intersection_true_verified.cpp)

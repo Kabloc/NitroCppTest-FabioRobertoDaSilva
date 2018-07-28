@@ -19,7 +19,7 @@ public:
 	// Parametized constructor will create a rectangle and verify if
 	// it is sized: 
 	// "Width and height are always positive integers" - from Purpose file
-	rectangle(int x, int y, unsigned int w, unsigned int h);
+	rectangle(int x, int y, int w, int h);
 
 	// Useful to verify if it is valid
 	explicit operator bool() const;

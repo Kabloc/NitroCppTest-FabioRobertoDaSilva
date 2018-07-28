@@ -3,12 +3,12 @@
 // Parametized constructor will create a rectangle and verify if
 // it is sized: 
 // "Width and height are always positive integers" - from Purpose file
-rectangle::rectangle(int x, int y, unsigned int w, unsigned int h) 
+rectangle::rectangle(int x, int y, int w, int h) 
 	: top_left_{ y, x }
 	, bottom_rigth_{ y + h, x + w } {
 
-	// If it is zero sized, it will be invalidated
-	valid_ = !(!w || !h);
+	// If it is of zero or negative size, it will be invalidated.
+	valid_ = !((w <= 0) || (h <= 0));
 }
 
 // Useful to verify if it is valid

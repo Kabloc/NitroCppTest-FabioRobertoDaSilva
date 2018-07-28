@@ -1,11 +1,11 @@
 Input:
-	1: Rectangle at (1, 1), w=10, h=10.
-	2: Rectangle at (11, 1), w=10, h=10.
-	3: Rectangle at (21, 1), w=10, h=10.
-	4: Rectangle at (1, 11), w=10, h=10.
-	5: Rectangle at (11, 11), w=10, h=10.
-	6: Rectangle at (21, 11), w=10, h=10.
-	7: Rectangle at (1, 21), w=10, h=10.
-	8: Rectangle at (11, 21), w=10, h=10.
-	9: Rectangle at (21, 21), w=10, h=10.
-	10: Rectangle at (31, 21), w=10, h=10.
+	1: Rectangle at (0, 5), w=10, h=10.
+	2: Rectangle at (-10, 0), w=10, h=10.
+	3: Rectangle at (-20, -5), w=10, h=10.
+	4: Rectangle at (-30, 5), w=10, h=10.
+	5: Rectangle at (-40, 5), w=10, h=10.
+	6: Rectangle at (0, -5), w=10, h=10.
+	7: Rectangle at (-10, -10), w=10, h=10.
+	8: Rectangle at (-20, -15), w=10, h=10.
+	9: Rectangle at (-30, -5), w=10, h=10.
+	10: Rectangle at (-40, -5), w=10, h=10.

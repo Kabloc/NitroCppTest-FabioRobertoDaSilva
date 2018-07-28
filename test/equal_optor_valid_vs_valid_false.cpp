@@ -3,8 +3,8 @@
 
 // Equal operator
 TEST(RectangleCaseTest, EqualOptor_ValidVsValidFalse) {
-	rectangle valid_a(10, 10, 10, 10);
-	rectangle valid_b(20, 20, 20, 20);
+	rectangle valid_a(0, 0, 1, 1);
+	rectangle valid_b(1, 1, 1, 1);
 
 	ASSERT_FALSE(valid_a == valid_b);
 }

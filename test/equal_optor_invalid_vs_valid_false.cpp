@@ -4,7 +4,7 @@
 // Equal operator
 TEST(RectangleCaseTest, EqualOptor_InvalidVsValidFalse) {
 	rectangle invalid;
-	rectangle valid(10, 10, 10, 10);
+	rectangle valid(1, 1, 1, 1);
 
 	ASSERT_FALSE(invalid == valid);
 }

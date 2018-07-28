@@ -4,8 +4,8 @@
 // Used to verify if exist a valid intersection rectangle
 // between this and another rectangle.
 TEST(RectangleCaseTest, Intersction_False) {
-	rectangle rect1(20, 10, 10, 10);
-	rectangle rect2(10, 10, 10, 10);
+	rectangle rect1(1, 0, 1, 1);
+	rectangle rect2(0, 0, 1, 1);
 
 	ASSERT_FALSE(rect1.intersect(rect2));
 }
