@@ -3,13 +3,12 @@
 // Just add a rectangle
 bool rectangles_matches::add_rectangle(const rectangle& new_rect) {
 
-	auto new_rect_ptr = std::make_shared<rectangle>(new_rect);
-
-	// if it is an invalid shared_ptr or an invalid rectangle, do nothing
-	if ((!new_rect_ptr) || !(*new_rect_ptr))
+	// if it is an invalid rectangle, do nothing
+	if (!new_rect)
 		return false;
 
 	// Creating a new node for the tree
+	auto new_rect_ptr = std::make_shared<rectangle>(new_rect);
 	int new_rect_id = ++actual_id_;
 	interaction_node new_node(new_rect_ptr);
 	new_node.parents.push_back(new_rect_id);
@@ -52,7 +51,7 @@ bool rectangles_matches::add_rectangle(const rectangle& new_rect) {
 					continue;
 
 				// Create a new intersection item to next level
-				interaction_node new_node(std::make_shared<rectangle>(node.rect->get_intersection(*new_rect_ptr)));
+				interaction_node new_node(node.rect->get_intersection(*new_rect_ptr));
 				new_node.parents = node.parents;
 				new_node.parents.push_back(new_rect_id);
 
@@ -74,12 +73,10 @@ bool rectangles_matches::add_rectangle(const rectangle& new_rect) {
 				}
 				had_new_intersection = true;
 			}
+			level++;
 			// If there was no intersection at the current level 
 			// it will be impossible to have the next level
-			if (!had_new_intersection)
-				break;
-			level++;
-		} while (1);
+		} while (had_new_intersection);
 	}
 	// All inserted rectangle must be in the first level
 	intersection_tree_[0].push_back(new_node);
@@ -93,7 +90,7 @@ std::ostream& operator<<(std::ostream& output, const rectangles_matches& rect) {
 		if (level == 0) { // The first level is the imputed rectangles
 		                  // Start the print as purposed:
 		                  // Input:
-		                  //    [rectangle number]: Rectangle at ([up], [left]), w = [width], h = [height].
+		                  //    [rectangle number]: Rectangle at ([left], [up]), w = [width], h = [height].
 			output << "Input:" << std::endl;
 			for (const auto &node : rect.intersection_tree_[level]) {
 				// REVIEWER NOTE: "rectangle number" today is the internal ID but can be the position
@@ -103,7 +100,7 @@ std::ostream& operator<<(std::ostream& output, const rectangles_matches& rect) {
 		else { // The others levels are the intersections
 		       // Continue the print as purposed
 		       // Intersections
-		       //    Between rectangle [list of parents] at ([up], [left]), w = [width], h = [height].
+		       //    Between rectangle [list of parents] at ([left], [up]), w = [width], h = [height].
 			if (level == 1)
 				output << std::endl << "Intersections" << std::endl;
 			for (const auto &node : rect.intersection_tree_[level]) {

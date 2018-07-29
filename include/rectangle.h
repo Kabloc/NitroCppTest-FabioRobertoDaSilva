@@ -7,6 +7,7 @@
 #include <utility>
 #include <sstream>
 #include <vector>
+#include <array>
 
 class rectangle {
 public:
@@ -39,17 +40,18 @@ public:
 
 	// Used to create an valid intersection rectangle between 
 	// this and another rectangle
-	const rectangle get_intersection(const rectangle& another) const;
+	ptr_t get_intersection(const rectangle& another) const;
 
 private:
+	// To improve the readability
+	enum VerticesNames {Top, Left, Bottom, Right};
 
 	// Assignment operator 
 	rectangle & operator=(const rectangle& another);
 
-	// I prefer to save the (Top, Left) point and (Bottom, Right) point 
+	// I prefer to save the vertices values 
 	// to make easy to make the calculus 
 	bool valid_ = { false };
-	std::pair<int, int> top_left_ = { 0, 0 };
-	std::pair<int, int> bottom_rigth_ = { 0, 0 };
+	std::array<int, 4> vertices_ = { 0, 0, 0, 0};
 };
 #endif //_RECTANGLES_H_

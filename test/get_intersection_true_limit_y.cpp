@@ -8,5 +8,5 @@ TEST(RectangleCaseTest, GetIntersection_TrueLimitY) {
 	rectangle rect2(1, 0, 2, 2);
 
 	// get_intersection return a shared_ptr to a valid rectangle
-	ASSERT_FALSE(!(rect1.get_intersection(rect2)));
+	ASSERT_FALSE(!(*rect1.get_intersection(rect2)));
 }

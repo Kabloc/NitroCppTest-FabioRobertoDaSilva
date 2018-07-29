@@ -4,8 +4,7 @@
 // it is sized: 
 // "Width and height are always positive integers" - from Purpose file
 rectangle::rectangle(int x, int y, int w, int h) 
-	: top_left_{ y, x }
-	, bottom_rigth_{ y + h, x + w } {
+	: vertices_{ y, x, y + h, x + w } {
 
 	// If it is of zero or negative size, it will be invalidated.
 	valid_ = !((w <= 0) || (h <= 0));
@@ -19,17 +18,16 @@ rectangle::operator bool() const {
 // Equal operator
 bool rectangle::operator==(const rectangle& another) const {
 	return ((valid_        == another.valid_) &&
-	        (top_left_     == another.top_left_) &&
-	        (bottom_rigth_ == another.bottom_rigth_));
+	        (vertices_     == another.vertices_));
 }
 
 // Operator << to make it easy to print the values
 std::ostream& operator<<(std::ostream& output, const rectangle& rect) {
 	// Example from purpose file:
-	// (top, left), w=(left - right), h=(bottom - top)
-		output << "(" << rect.top_left_.second << ", " << rect.top_left_.first << "), "
-		       << "w=" << rect.bottom_rigth_.second - rect.top_left_.second << ", "
-		       << "h=" << rect.bottom_rigth_.first - rect.top_left_.first;
+	// (left, top), w=(right - left), h=(bottom - top)
+		output << "(" << rect.vertices_[rectangle::Left] << ", " << rect.vertices_[rectangle::Top] << "), "
+		       << "w=" << rect.vertices_[rectangle::Right] - rect.vertices_[rectangle::Left] << ", "
+		       << "h=" << rect.vertices_[rectangle::Bottom] - rect.vertices_[rectangle::Top];
 
 	return output;
 }
@@ -44,6 +42,7 @@ const std::string rectangle::to_string() const {
 // Used to verify if exist a valid intersection rectangle
 // between this and another rectangle.
 bool rectangle::intersect(const rectangle& another) const {
+
 	// Verifying if this and the other rectangle is a valid
 	if ((!valid_) || (!another)) 
 		return false;
@@ -53,54 +52,51 @@ bool rectangle::intersect(const rectangle& another) const {
 		return true;
 
 	// Verifying if the other rectangle is under or above me
-	if ((top_left_.first >= another.bottom_rigth_.first) ||
-		(another.top_left_.first >= bottom_rigth_.first))
+	if ((vertices_[Top] >= another.vertices_[Bottom]) ||
+		(another.vertices_[Top] >= vertices_[Bottom]))
 		return false;
 
 	// Verifying if the other rectangle is left or right of me 
-	if ((top_left_.second >= another.bottom_rigth_.second) ||
-		(another.top_left_.second >= bottom_rigth_.second))
+	if ((vertices_[Left] >= another.vertices_[Right]) ||
+		(another.vertices_[Left] >= vertices_[Right]))
 		return false;
 
 	return true;
 }
 
-// Used to create an valid intersection rectangle between 
-// this and another rectangle
-const rectangle rectangle::get_intersection(const rectangle& another) const {
-	rectangle result;
+// Used to create an valid intersection rectangle between this and another rectangle
+rectangle::ptr_t rectangle::get_intersection(const rectangle& another) const {
+	auto result = std::make_shared<rectangle>();
+
+	// If any involved rectangle is not valid, do nothing
+	if ((!valid_) || (!another))
+		return result;
 
 	// If there are the same values
 	if ((*this) == another) {
-		result = another;
+		(*result) = another;
 		return result;
 	}
 
 	// Verifying if exist a valid intersection.
 	if (intersect(another)) {
-		int x = { 0 }, y = { 0 };
+		result->vertices_ = {
+			// Getting top
+			std::max(vertices_[Top], another.vertices_[Top]),
 
-		// Getting top
-		x = std::max(top_left_.first, another.top_left_.first);
+			// Getting left
+			std::max(vertices_[Left], another.vertices_[Left]),
 
-		// Getting left
-		y = std::max(top_left_.second, another.top_left_.second);
+			// Getting bottom
+			std::min(vertices_[Bottom], another.vertices_[Bottom]),
 
-		// Saving top_left_;
-		result.top_left_ = std::make_pair(x, y);
-
-		// Getting bottom
-		x = std::min(bottom_rigth_.first, another.bottom_rigth_.first);
-
-		// Getting right
-		y = std::min(bottom_rigth_.second, another.bottom_rigth_.second);
-
-		// Saving bottom_right
-		result.bottom_rigth_ = std::make_pair(x, y);
+			// Getting right
+			std::min(vertices_[Right], another.vertices_[Right])
+		};
 
 		// There I can validate the rectangle because
 		// all data come from valid rectangles
-		result.valid_ = true;
+		result->valid_ = true;
 	}
 
 	return result;
@@ -109,7 +105,6 @@ const rectangle rectangle::get_intersection(const rectangle& another) const {
 // Assignment operator 
 rectangle& rectangle::operator=(const rectangle& another) {
 	valid_ = another.valid_;
-	top_left_ = another.top_left_;
-	bottom_rigth_ = another.bottom_rigth_;
+	vertices_ = another.vertices_;
 	return *this;
 }

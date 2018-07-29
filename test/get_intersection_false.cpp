@@ -8,5 +8,5 @@ TEST(RectangleCaseTest, GetIntersection_False) {
 	rectangle rect2(2, 0, 2, 2);
 
 	// get_intersection return a shared_ptr to an invalid rectangle
-	ASSERT_TRUE(!(rect1.get_intersection(rect2)));
+	ASSERT_TRUE(!(*rect1.get_intersection(rect2)));
 }
