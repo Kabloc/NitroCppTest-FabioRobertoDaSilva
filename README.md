@@ -24,7 +24,7 @@ Alternatively, the last step can be performed running make directly:
 
 To run the unitary tests execute (from build folder):
 ```
-> make test
+> ctest -V
 ```
 
 To run application execute (from build folder):
@@ -49,7 +49,7 @@ Alternatively, the last step can be performed with Visual Studio. Solution file 
 
 To run the unitary tests execute (from build folder):
 ```
-> ctest -C <Config>
+> ctest -V -C <Config>
 ```
 
 To run application execute (from build folder):
